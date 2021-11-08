@@ -69,14 +69,11 @@ returnFnResult(result);
    console.log(f()); // выведет 13
  */
 const returnCounter = (number = 0) => {
-  let counter = 0;
-  return function addCounter() {
-    counter += 1;
-    return number + counter;
-  };
+  return () => ++number;
 };
 
-returnCounter();
+const f = returnCounter();
+console.log(f());
 
 /*
  Задание 5 *:
