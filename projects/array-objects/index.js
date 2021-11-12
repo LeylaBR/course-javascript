@@ -45,9 +45,10 @@ map([1, 2, 3], (el) => el ** 2);
  Пример:
    reduce([1, 2, 3], (all, current) => all + current) // 6
  */
-const reduce = (array, fn, initial = 0) => {
-  let result = array[0] + initial;
-  for (let i = 1; i < array.length; i++) {
+const reduce = (array, fn, initial) => {
+  let result = initial ?? array[0];
+  const startFrom = initial ? 0 : 1;
+  for (let i = startFrom; i < array.length; i++) {
     result = fn(result, array[i], i, array);
   }
   return result;
@@ -87,11 +88,8 @@ upperProps({ name: 'Сергей', lastName: 'Петров' });
 const createProxy = (obj) => {
   obj = new Proxy(obj, {
     set(target, prop, val) {
-      if (typeof val == 'number') {
-        target[prop] = val * val;
-        return true;
-      }
-      return false;
+      target[prop] = val * val;
+      return true;
     },
   });
   return obj;
