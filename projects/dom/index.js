@@ -29,10 +29,6 @@ createDivWithText('loftschool');
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
 function prepend(what, where) {
-  const body = document.body;
-
-  body.prepend(where);
-
   where.prepend(what);
 }
 
@@ -56,13 +52,14 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
-  let arr = [];
+  const arr = [];
 
   for (const node of where.children) {
-    if (node.nodeName == 'P') {
-      arr.push(node.previousElementSibling);
+    if (node.nextElementSibling?.nodeName === 'P') {
+      arr.push(node);
     }
   }
+
   return arr;
 }
 
@@ -163,31 +160,33 @@ function collectDOMStat(root) {
     classes: {},
     texts: 0,
   };
-  let rootChildren = root.children;
+
+  const rootChildren = root.childNodes;
+
   const statDOM = (item) => {
-    for (let child of item) {
-      if ([child.nodeName] in obj.tags) {
-        obj.tags[child.nodeName] += 1;
-      } else {
-        obj.tags[child.nodeName] = 1;
+    for (const child of item) {
+      if (child.nodeType == Node.ELEMENT_NODE) {
+        if (child.nodeName in obj.tags) {
+          obj.tags[child.nodeName] += 1;
+        } else {
+          obj.tags[child.nodeName] = 1;
+        }
+      } else if (child.nodeType === Node.TEXT_NODE) {
+        obj.texts += 1;
       }
 
-      for (let key of child.classList) {
-        if (key in obj.classes) {
-          obj.classes[key] += 1;
-        } else if (child.classList.length) {
-          obj.classes[key] = 1;
+      if (child.classList && child.classList.value !== '') {
+        for (const val of child.classList) {
+          if (val in obj.classes) {
+            obj.classes[val] += 1;
+          } else if (child.classList.length) {
+            obj.classes[val] = 1;
+          }
         }
       }
 
-      if (obj.texts !== 0) {
-        obj.texts += 1;
-      } else if (obj.texts === 0) {
-        obj.texts = 1;
-      }
-
       if (child.hasChildNodes()) {
-        let elemChild = child.children;
+        const elemChild = child.childNodes;
         statDOM(elemChild);
       }
     }
@@ -230,28 +229,15 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
-  let res = {
-    type: '',
-    nodes: [],
-  };
-
   const observer = new MutationObserver((mutation) => {
     console.log(mutation);
     mutation.forEach((record) => {
-      if (record.removedNodes.length) {
-        const removedChildName = record.removedNodes;
-        removedChildName.forEach((elem) => {
-          res.nodes.push(elem);
-          res.type = 'remove';
-          fn(res);
-        });
-      }
-      if (record.addedNodes.length) {
-        const addedChildName = record.addedNodes;
-        addedChildName.forEach((elem) => {
-          res.nodes.push(elem);
-          res.type = 'insert';
-          fn(res);
+      if (record.type === 'childList') {
+        fn({
+          type: record.addedNodes.length ? 'insert' : 'remove',
+          nodes: [
+            ...(record.addedNodes.length ? record.addedNodes : record.removedNodes),
+          ],
         });
       }
     });
@@ -259,6 +245,7 @@ function observeChildNodes(where, fn) {
 
   observer.observe(where, {
     childList: true,
+    subtree: true,
   });
 }
 
