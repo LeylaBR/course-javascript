@@ -18,12 +18,40 @@
 import './dnd.html';
 
 const homeworkContainer = document.querySelector('#app');
-
-document.addEventListener('mousemove', (e) => {});
-
-export function createDiv() {}
-
 const addDivButton = homeworkContainer.querySelector('#addDiv');
+
+function elementMovement(elem) {
+  elem.addEventListener('mousedown', (event) => {
+    move(event.pageX, event.pageY);
+
+    function move(pageX, pageY) {
+      elem.style.left = pageX - elem.offsetWidth / 2 + 'px';
+      elem.style.top = pageY - elem.offsetHeight / 2 + 'px';
+    }
+
+    function onMouseMove(event) {
+      move(event.pageX, event.pageY);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+
+    elem.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', onMouseMove);
+    });
+  });
+}
+
+export function createDiv() {
+  const newDiv = document.createElement('div');
+  newDiv.classList.add('draggable-div');
+  newDiv.style.width = Math.floor(Math.random() * 100 + 1) + 'px';
+  newDiv.style.height = Math.floor(Math.random() * 100 + 1) + 'px';
+  newDiv.style.backgroundColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+  newDiv.style.left = Math.floor(Math.random() * 100 + 1) + 'px';
+  newDiv.style.top = Math.floor(Math.random() * 100 + 1) + 'px';
+  elementMovement(newDiv);
+  return newDiv;
+}
 
 addDivButton.addEventListener('click', function () {
   const div = createDiv();
