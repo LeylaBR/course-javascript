@@ -26,13 +26,12 @@
 import './cookie.html';
 
 /*
- app - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
-
- Пример:
-   const newDiv = document.createElement('div');
-   homeworkContainer.appendChild(newDiv);
- */
+  app - это контейнер для всех ваших домашних заданий
+  Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
+  Пример:
+    const newDiv = document.createElement('div');
+    homeworkContainer.appendChild(newDiv);
+  */
 const homeworkContainer = document.querySelector('#app');
 // текстовое поле для фильтрации cookie
 const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
@@ -45,8 +44,86 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('input', function () {});
+// все уже имеющиеся cookies
 
-addButton.addEventListener('click', () => {});
+const cookies = document.cookie.split('; ').reduce((prev, current) => {
+  const [name, value] = current.split('=');
+  prev[name] = value;
+  return prev;
+}, {});
 
-listTable.addEventListener('click', (e) => {});
+function addingToTable(cookie) {
+  const cookieDiv = document.createElement('tr');
+  listTable.appendChild(cookieDiv);
+  cookieDiv.innerHTML = `<td>${cookie}</td><td>${cookies[cookie]}</td><button>Удалить</button>`;
+}
+
+// фильтрация
+
+let currentFilterValue = '';
+
+function isMatching(full, chunk) {
+  return full?.toLowerCase().includes(chunk.toLowerCase());
+}
+
+filterNameInput.addEventListener('input', function () {
+  currentFilterValue = this.value;
+  updateFilter();
+});
+
+function updateFilter() {
+  listTable.innerHTML = '';
+  if (currentFilterValue === '') {
+    availableСookie();
+  } else {
+    for (const cookie in cookies) {
+      if (
+        currentFilterValue &&
+        (isMatching(cookie, currentFilterValue) ||
+          isMatching(cookies[cookie], currentFilterValue))
+      ) {
+        addingToTable(cookie);
+      }
+    }
+  }
+}
+
+// добавляется новая cookie
+
+const availableСookie = () => {
+  for (const cookie in cookies) {
+    if (cookie !== '') {
+      addingToTable(cookie);
+    }
+  }
+};
+
+availableСookie();
+
+addButton.addEventListener('click', () => {
+  if (addNameInput.value !== '' && addValueInput.value !== '') {
+    document.cookie = `${addNameInput.value}=${addValueInput.value};max-age=86400;`;
+    listTable.innerHTML = '';
+    cookies[addNameInput.value] = addValueInput.value;
+    availableСookie();
+    updateFilter();
+    addNameInput.value = '';
+    addValueInput.value = '';
+  }
+});
+
+// выбранная cookie удаляется из браузера и таблицы
+
+listTable.addEventListener('click', (e) => {
+  if (e.target.nodeName === 'BUTTON') {
+    const parent = e.target.parentNode;
+    const nameCookie = parent.firstChild.textContent;
+    parent.remove();
+
+    for (const key in cookies) {
+      if (key === nameCookie) {
+        document.cookie = `${nameCookie}=; max-age=-1;`;
+      }
+    }
+  }
+});
