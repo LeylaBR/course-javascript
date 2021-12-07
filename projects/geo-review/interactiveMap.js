@@ -1,3 +1,5 @@
+/* global ymaps */
+
 export default class InteractiveMap {
   constructor(mapId, onClick) {
     this.mapId = mapId;
