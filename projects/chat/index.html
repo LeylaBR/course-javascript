@@ -1,0 +1,379 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
+  html,
+  body,
+  #map {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  div,
+  h1,
+  h2,
+  p {
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  li,
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Ubuntu', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.42;
+  }
+
+  .chat {
+    background-color: #17212b;
+    height: 100%;
+    color: #ffffff;
+    position: relative;
+  }
+
+  .authorization {
+    display: none;
+  }
+
+  .authorization.active {
+    margin: 0 auto;
+    padding-top: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .icon {
+    width: 139px;
+    height: 139px;
+    background-color: #232f3d;
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: 29px;
+  }
+
+  .icon-chat {
+    position: absolute;
+    top: 25%;
+    left: 17%;
+  }
+
+  .entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+  }
+
+  .entry__title {
+    font-size: 24px;
+    margin-bottom: 13px;
+  }
+
+  .entry__text {
+    color: #7f91a4;
+    margin-bottom: 37px;
+    text-align: center;
+    padding: 0 12%;
+  }
+
+  .entry__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .entry__input {
+    margin-bottom: 4px;
+    background-color: #17212b;
+    width: 298px;
+    height: 32px;
+    font-family: inherit;
+    font-size: inherit;
+    color: #ffffff;
+    border: none;
+    border-bottom: 1px solid #465461;
+    outline: none;
+  }
+
+  .entry__input:focus {
+    border-bottom: 1px solid #5188c0;
+  }
+
+  .entry__error {
+    margin-bottom: 42px;
+    text-align: center;
+    font-size: 14px;
+    color: #5188c1;
+  }
+
+  .button {
+    background-color: #5188c1;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .entry__button {
+    padding: 13px 40px;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+
+  .button:hover {
+    background-color: #6699cc;
+  }
+
+  .button:active {
+    background-color: #336699;
+  }
+
+  .chat-window {
+    display: none;
+  }
+
+  .chat-window.active {
+    display: flex;
+    height: 100%;
+    line-height: 16.09px;
+    background-color: #0e1621;
+  }
+
+  .users {
+    width: 263px;
+    background-color: #17212b;
+    padding: 10px 0 0 15px;
+    margin-right: 2px;
+  }
+
+  .users__header {
+    height: 56px;
+    position: relative;
+  }
+
+  .user-list-header {
+    color: #5387c1;
+    margin-bottom: 13px;
+  }
+
+  .hamburger {
+    position: absolute;
+    top: 24px;
+    left: 13px;
+    width: 18px;
+    height: 12px;
+  }
+
+  .user__current {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    background-color: #0e1621;
+    margin-right: 2px;
+    padding: 9px;
+    margin-left: -7px;
+  }
+  .current__item {
+    border: 3px #0e1621 solid;
+    padding: 5px;
+    margin-left: -7px;
+    margin-right: 3px;
+  }
+
+  .users__item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .users__icon {
+    background: url(projects/chat/placeholder.png);
+    background-size: cover;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    margin-right: 9px;
+  }
+
+  .users__name {
+    font-weight: 500;
+    color: #5387c1;
+    margin-bottom: 3px;
+  }
+
+  .users__last-messag {
+    color: #7f91a4;
+  }
+
+  .messages {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+  }
+
+  .messages__header {
+    padding: 13px 0 9px 16px;
+    background-color: #17212b;
+  }
+
+  .messages__heading {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .messages__member {
+    color: #7f91a4;
+    font-size: 12px;
+  }
+
+  .messages__panel {
+    flex: 1;
+    overflow-x: hidden;
+  }
+
+  .messages__panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .messages__panel-input {
+    background-color: #17212b;
+    min-height: 54px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 13px;
+  }
+
+  .message-item-system {
+    color: #858f98;
+    font-size: 14px;
+    margin: 17px 0 0 19px;
+  }
+
+  .messages__desc {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .messages__avatar {
+    width: 33px;
+    height: 33px;
+    margin-left: 9px;
+    background-size: cover;
+    border-radius: 50%;
+  }
+
+  .messages__block {
+    margin-left: 14px;
+    margin-top: 17px;
+  }
+
+  .messages__name-user {
+    color: #5387c1;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 9px;
+  }
+
+  .messages__text {
+    background-color: #182633;
+    padding: 12px 15px;
+    width: fit-content;
+    color: white;
+  }
+
+  span {
+    margin-left: 14px;
+    display: inline-block;
+    color: #7f91a4;
+    font-size: 14px;
+  }
+
+  .messages-control {
+    flex: 1;
+    background-color: #17212b;
+    font-family: inherit;
+    font-size: inherit;
+    color: #ffffff;
+    border: none;
+    outline: none;
+  }
+
+  .messages__button {
+    padding: 6px 20px;
+  }
+</style>
+
+<div class="chat">
+  <div class="authorization active">
+    <div class="icon">
+      <svg class="icon-chat">
+        <use xlink:href="projects/chat/img/sprite.svg#chat"></use>
+      </svg>
+    </div>
+    <div class="entry">
+      <h2 class="entry__title">Авторизация</h2>
+      <div class="entry__text">
+        <p>Введите пожалуйста свой ник для дальнейшей авторизации</p>
+      </div>
+      <div class="entry__form">
+        <input
+          class="entry__input"
+          data-role="entry-nickname"
+          type="text"
+          placeholder="Введите свой ник"
+        />
+        <div class="entry__error"></div>
+      </div>
+      <button class="button entry__button" data-role="entry-add">
+        войти
+      </button>
+    </div>
+  </div>
+  <div class="chat-window">
+    <div class="users">
+      <div class="users__header">
+        <img src="" alt="" />
+        <svg class="hamburger">
+          <use xlink:href="projects/chat/img/sprite.svg#hamburger"></use>
+        </svg>
+      </div>
+      <div class="user__current">
+        <div class="users__icon" data-role="user-photo"></div>
+        <div class="users__name"></div>
+      </div>
+      <div class="user-list-header">Все пользователи:</div>
+      <ul class="users__list"></ul>
+    </div>
+
+    <div class="messages">
+      <div class="messages__header">
+        <div class="messages__heading">Чат</div>
+        <div class="messages__member"></div>
+      </div>
+      <div class="messages__panel"></div>
+      <div class="messages__panel-input">
+        <input
+          class="messages-control"
+          type="text"
+          data-role="message-text"
+          placeholder="Введите сообщение..."
+        />
+        <button class="button messages__button" data-role="messages-add">
+          Отправить
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
